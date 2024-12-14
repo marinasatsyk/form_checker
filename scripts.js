@@ -1,47 +1,64 @@
 document.addEventListener("DOMContentLoaded", () => {
     console.log("scripts.js loaded and DOM content loaded");
 
-    // Conteneur pour afficher les fichiers ajoutés
-    const fileListContainer = document.getElementById("file-list-container");
+    // Conteneur pour afficher les fichiers ajoutés avec leurs aperçus
     const fileDropContainer = document.getElementById("file-drop-container");
     const fileInput = document.getElementById("file-input");
     const fileOrder = document.getElementById("file-order");
+    const imagePreviewsContainer = document.getElementById("image-previews");
 
-    // Tableau pour stocker l'ordre des fichiers
+    // Tableau pour stocker les fichiers dans l'ordre d'ajout
     const filesArray = [];
 
-    // Fonction pour afficher les fichiers ajoutés avec les boutons "monter" et "descendre"
+    // Fonction pour afficher les fichiers ajoutés avec leurs aperçus
     function renderFileList() {
-        // Vider le conteneur actuel
-        fileListContainer.innerHTML = '';
+        imagePreviewsContainer.innerHTML = ''; // Vider le conteneur d'aperçus d'images
 
         if (filesArray.length === 0) {
-            fileListContainer.innerHTML = '<p>Aucun fichier ajouté</p>';
+            imagePreviewsContainer.innerHTML = '<p>Aucun fichier ajouté</p>';
         } else {
-            // Créer une liste d'éléments avec boutons pour chaque fichier
+            // Créer une liste de prévisualisations pour chaque fichier
             filesArray.forEach((file, index) => {
+                // Conteneur pour chaque fichier et son aperçu
                 const fileWrapper = document.createElement('div');
+                fileWrapper.style.display = 'flex';
+                fileWrapper.style.alignItems = 'center';
                 fileWrapper.style.marginBottom = '10px';
-                
+
+                // Créer un aperçu de l'image
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = document.createElement('img');
+                    img.src = event.target.result;
+                    img.style.width = '100px'; // Vous pouvez ajuster la taille de l'aperçu
+                    img.style.marginRight = '10px';
+                    img.style.cursor = 'pointer';
+
+                    // Ajouter l'aperçu à son conteneur
+                    fileWrapper.appendChild(img);
+                };
+                reader.readAsDataURL(file); // Lire le fichier image pour l'aperçu
+
+                // Afficher le nom du fichier
                 const fileName = document.createElement('span');
                 fileName.textContent = file.name;
                 fileWrapper.appendChild(fileName);
 
-                // Bouton pour monter
+                // Boutons pour déplacer l'image
                 const upButton = document.createElement('button');
                 upButton.textContent = 'Monter';
-                upButton.disabled = index === 0; // Désactiver le bouton "monter" si c'est déjà le premier fichier
+                upButton.disabled = index === 0; // Désactiver si c'est déjà le premier fichier
                 upButton.addEventListener('click', () => moveFileUp(index));
                 fileWrapper.appendChild(upButton);
 
-                // Bouton pour descendre
                 const downButton = document.createElement('button');
                 downButton.textContent = 'Descendre';
-                downButton.disabled = index === filesArray.length - 1; // Désactiver le bouton "descendre" si c'est déjà le dernier fichier
+                downButton.disabled = index === filesArray.length - 1; // Désactiver si c'est déjà le dernier fichier
                 downButton.addEventListener('click', () => moveFileDown(index));
                 fileWrapper.appendChild(downButton);
 
-                fileListContainer.appendChild(fileWrapper);
+                // Ajouter le conteneur du fichier à l'affichage
+                imagePreviewsContainer.appendChild(fileWrapper);
             });
         }
 
@@ -54,10 +71,9 @@ document.addEventListener("DOMContentLoaded", () => {
     function moveFileUp(index) {
         if (index > 0) {
             const file = filesArray[index];
-            filesArray.splice(index, 1); // Retirer le fichier de la position actuelle
-            filesArray.splice(index - 1, 0, file); // Insérer le fichier à la nouvelle position
-
-            renderFileList(); // Re-rendre la liste des fichiers
+            filesArray.splice(index, 1);
+            filesArray.splice(index - 1, 0, file);
+            renderFileList();
         }
     }
 
@@ -65,48 +81,48 @@ document.addEventListener("DOMContentLoaded", () => {
     function moveFileDown(index) {
         if (index < filesArray.length - 1) {
             const file = filesArray[index];
-            filesArray.splice(index, 1); // Retirer le fichier de la position actuelle
-            filesArray.splice(index + 1, 0, file); // Insérer le fichier à la nouvelle position
-
-            renderFileList(); // Re-rendre la liste des fichiers
+            filesArray.splice(index, 1);
+            filesArray.splice(index + 1, 0, file);
+            renderFileList();
         }
     }
 
-    // Suivre l'ordre des fichiers lors du drag and drop
+    // Gérer l'événement dragover pour permettre le drop
     fileDropContainer.addEventListener("dragover", (event) => {
         event.preventDefault();
-        fileDropContainer.style.backgroundColor = "#e9e9e9"; // Indiquer qu'on peut déposer des fichiers
+        fileDropContainer.style.backgroundColor = "#e9e9e9";
     });
 
+    // Gérer l'événement dragleave pour rétablir le style
     fileDropContainer.addEventListener("dragleave", (event) => {
         event.preventDefault();
-        fileDropContainer.style.backgroundColor = "#fff"; // Rétablir la couleur
+        fileDropContainer.style.backgroundColor = "#fff";
     });
 
+    // Lorsque les fichiers sont déposés dans la zone de drop
     fileDropContainer.addEventListener("drop", (event) => {
         event.preventDefault();
-        fileDropContainer.style.backgroundColor = "#fff"; // Rétablir la couleur
+        fileDropContainer.style.backgroundColor = "#fff";
 
-        // Récupérer les fichiers déposés
         const droppedFiles = Array.from(event.dataTransfer.files);
         console.log("Dropped files:", droppedFiles);
 
-        // Ajouter les fichiers dans l'ordre et réafficher la liste
+        // Ajouter les fichiers au tableau
         droppedFiles.forEach(file => filesArray.push(file));
-        renderFileList(); // Mettre à jour l'affichage des fichiers
+        renderFileList();
     });
 
-    // Si vous avez un input file caché pour permettre un ajout classique de fichiers
+    // Lorsque l'utilisateur sélectionne des fichiers via le champ input
     fileInput.addEventListener("change", (event) => {
         const selectedFiles = Array.from(fileInput.files);
         console.log("Files selected:", selectedFiles);
 
-        // Ajouter les fichiers dans l'ordre et réafficher la liste
+        // Ajouter les fichiers au tableau
         selectedFiles.forEach(file => filesArray.push(file));
-        renderFileList(); // Mettre à jour l'affichage des fichiers
+        renderFileList();
     });
 
-    // Ouvrir le file input lorsqu'on clique sur le container
+    // Ouvrir l'input file lorsqu'on clique sur le conteneur
     fileDropContainer.addEventListener("click", () => {
         fileInput.click();
     });
