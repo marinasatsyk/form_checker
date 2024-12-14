@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Données d'entrée pour création de rapport</title>
+
+    <!-- Link to the external CSS file -->
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"> -->
+
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Données d'entrée pour création de rapport</h2>
+
+        <form id="data-form"  method="POST" enctype="multipart/form-data">
+
+            <div class="form-group">
+                <label for="project_name">Nom du projet/dossier:</label>
+                <input type="text" id="project_name" name="project_name" value="{{ prefill_data['project_name'] }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="date_visite">Date du diagnostique:</label>
+                <input type="date" id="date_visite" name="date_visite" value="{{ prefill_data['date_visite'] }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="diag_name">Diagnostiqueur:</label>
+                <select id="diag_name" name="diag_name">
+                    <option value="Rémi DORANGEON">Rémi DORANGEON</option>
+                    <option value="Hugo CHIECCHIO">Hugo CHIECCHIO</option>
+                    <option value="Romain COASSY">Romain COASSY</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="diag_quality">Qualité diagnostiqueur:</label>
+                <select id="diag_quality" name="diag_quality">
+                    <option value="Ingenieur Génie Civil">Ingénieur Génie Civil</option>
+                    <option value="Ingénieur structure">Ingénieur structure</option>
+                    <option value="Ingénieur béton">Ingénieur béton</option>
+                    <option value="Directeur général">Directeur général</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="site_address">Adresse du site:</label>
+                <input type="text" id="site_address" name="site_address" value="{{ prefill_data['site_address'] }}">
+            </div>
+
+            <div class="form-group">
+                <label for="client_name">Nom du client:</label>
+                <input type="text" id="client_name" name="client_name" value="{{ prefill_data['client_name'] }}">
+            </div>
+
+            <div class="form-group">
+                <label for="client_address">Adresse du client:</label>
+                <textarea id="client_address" name="client_address">{{ prefill_data['client_address'] }}</textarea>
+            </div>
+
+            <!-- Input pour sélectionner plusieurs photos -->
+            <!-- <div class="form-group">
+                <label for="photos_report_paths">Photos pour le rapport :</label>
+                <input type="file" id="photos_report_paths" name="photos_report_paths" multiple>
+                <input type="hidden" id="photos_report_order" name="photos_report_order">
+            </div> -->
+<!-- Section pour le drag and drop -->
+<div id="file-drop-container" style="border: 2px dashed #ccc; padding: 20px; width: 300px; height: 150px;">
+    <p>Drag files here to add</p>
+    <input type="file" id="file-input" multiple style="display:none;" />
+</div>
+
+<!-- Conteneur pour afficher les fichiers ajoutés avec boutons pour les réorganiser -->
+<div id="file-list-container" style="margin-top: 20px;">
+    <p>Aucun fichier ajouté</p>
+</div>
+
+<input type="hidden" id="file-order" name="file_order" />
+            
+            <!-- File input for prompt photos -->
+            <div class="form-group">
+                <label for="photos_prompt_paths">Photos pour le prompt :</label>
+                <input type="file" id="photos_prompt_paths" name="photos_prompt_paths" multiple>
+                <input type="hidden" id="photos_prompt_order" name="photos_prompt_order">
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description du diagnostique:</label>
+                <textarea id="description" name="description" rows="100">{{ prefill_data['description'] }}</textarea>
+
+            </div>
+
+            <button type="submit" id="submit-button">Submit</button>
+        </form>
+
+        <a id="download-button" href="#" style="display: none;">Download File</a>
+<!--        <a id="download-link" href="#" style="display: none;">Download File</a>-->
+
+    </div>
+
+    <script src="scripts.js" defer></script>
+
+</body>
+</html>
